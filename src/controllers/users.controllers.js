@@ -8,7 +8,7 @@ const generateAccessandRefreshTokens = function (user) {
     const accessToken = jwt.sign({ _id: user._id, email: user.email }, process.env.ACCESS_TOKEN_SECRET, {
         expiresIn: "1h",
     });
-    const refreshToken = jwt.sign({ email: user.email, username: user.username, _id: user._id, }, process.env.REFRESH_TOKEN_SECRET, {
+    const refreshToken = jwt.sign({ email: user.email, userName: user.userName, _id: user._id, }, process.env.REFRESH_TOKEN_SECRET, {
         expiresIn: "10d",
     });
     return { accessToken, refreshToken }
@@ -50,8 +50,9 @@ const registerUser = async (req, res) => {
             .status(201).json({
                 message: "New user created",
                 newUser: {
-                    username: user.userName,
-                    fullname: user.fullName,
+                    userName: user.userName,
+                    fullName: user.fullName,
+                    profilePicture: user.profilePicture,
                     email: user.email,
                     _id: user._id
                 },
@@ -62,7 +63,7 @@ const registerUser = async (req, res) => {
     } catch (error) {
         //error checking
         if (error.code === 11000) {
-            return res.status(400).json({ message: "Username or email already exists." });
+            return res.status(400).json({ message: "userName or email already exists." });
         }
         if (error.name === 'ValidationError') {
             return res.status(400).json({ message: error.message });
@@ -73,16 +74,16 @@ const registerUser = async (req, res) => {
 
 
 const loginUser = async function (req, res) {
-    const { username, email, password } = req.body;
+    const { userName, email, password } = req.body;
     try {
-        if (!username && !email) return res.status(400).json({
-            message: "Username or email is required!"
+        if (!userName && !email) return res.status(400).json({
+            message: "userName or email is required!"
         })
         const user = await User.findOne(
             {
                 $or: [
                     { email: email },
-                    { username: username }
+                    { userName: userName }
                 ]
             }
         )
@@ -94,7 +95,7 @@ const loginUser = async function (req, res) {
             message: "Invalid credentials"
         })
         const { accessToken, refreshToken } = generateAccessandRefreshTokens(user)
-        const updateRefreshTokenInDB = await User.findOneAndUpdate({ $or: [{ email: email }, { username: username }] }, { $set: { refreshToken } }, { new: true })
+        const updateRefreshTokenInDB = await User.findOneAndUpdate({ $or: [{ email: email }, { userName: userName }] }, { $set: { refreshToken } }, { new: true })
         if (!updateRefreshTokenInDB) return res.status(404).json({ message: "User not found" });
         res
             .cookie("refreshToken", refreshToken, { httpOnly: true, secure: process.env.NODE_ENV === 'production', maxAge: 24 * 60 * 60 * 1000 })
@@ -102,9 +103,11 @@ const loginUser = async function (req, res) {
             .json({
                 message: "User successfully logged in!",
                 user: {
-                    username: user.username,
-                    fullname: user.fullname,
+                    userName: user.userName,
+                    fullname: user.fullName,
+                    profilePicture: user.profilePicture,
                     email: user.email,
+
                     _id: user._id
                 },
                 tokens: {

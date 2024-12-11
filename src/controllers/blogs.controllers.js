@@ -3,11 +3,11 @@ import blogModel from "../models/blogs.models.js";
 
 const addBlog = async (req, res) => {
     try {
-        const { title, description, email } = req.body;
-        if (!title || !description || !email) {
+        const { title, description, author } = req.body;
+        if (!title || !description || !author) {
             return res.status(400).json({ message: "Blog title,description and user email is required!" });
         }
-        const newblog = await blogModel.create({ title, description, email })
+        const newblog = await blogModel.create({ title, description, author })
         res.status(201).json({
             message: "Blog added",
             status: 201,
@@ -41,18 +41,18 @@ const allBlogs = async (req, res) => {
 
 //gets single blog
 const singleUserBlogs = async (req, res) => {
-    const { email } = req.body;
-    if (!email) {
+    const { author } = req.body;
+    if (!author || !mongoose.Types.ObjectId.isValid(author)) {
         return res.status(400).json({
-            message: "Email not given",
+            message: "Invalid author ID",
             status: 400
         })
     }
     try {
-        const getSingleUserBlogs = await blogModel.findOne({ email: email })
+        const getSingleUserBlogs = await blogModel.findOne({ author })
         if (!getSingleUserBlogs) {
             return res.status(404).json({
-                message: "No blogs found with this email",
+                message: "No blogs found",
                 status: 404
             });
         }
@@ -116,7 +116,7 @@ const editBlog = async (req, res) => {
     }
     try {
         const updatedblog = await blogModel.findByIdAndUpdate(id,
-            { title,description }, { new: true, runValidators: true })
+            { title, description }, { new: true, runValidators: true })
         if (!updatedblog) {
             return res.status(404).json({
                 message: "blog not found",
@@ -136,4 +136,4 @@ const editBlog = async (req, res) => {
     }
 }
 
-export { addBlog, allBlogs, editBlog, singleUserBlogs, deleteBlog}
+export { addBlog, allBlogs, editBlog, singleUserBlogs, deleteBlog }
