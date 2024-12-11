@@ -20,12 +20,18 @@ const generateAccessandRefreshTokens = function (user) {
 const registerUser = async (req, res) => {
 
     //getting data
-    const { username, fullname, email, password } = req.body;
-
+    const { userName, fullName, email, password } = req.body;
+    if (!req.file) return res.status(400).json({
+        message: "No file found"
+    })
+    const image = req.file.path;
     try {
 
+        //uploading image to cloudinary and expecting the url in return
+        const profilePicture = await uploadImageToCloudinary(image)
+
         //creating data instance
-        const user = new User({ username, fullname, email, password })
+        const user = new User({ userName, fullName, email, password,profilePicture })
 
         //generating and adding the tokens midway through
         const { accessToken, refreshToken } = generateAccessandRefreshTokens(user)
@@ -44,8 +50,8 @@ const registerUser = async (req, res) => {
             .status(201).json({
                 message: "New user created",
                 newUser: {
-                    username: user.username,
-                    fullname: user.fullname,
+                    username: user.userName,
+                    fullname: user.fullName,
                     email: user.email,
                     _id: user._id
                 },
@@ -123,7 +129,7 @@ const logoutUser = async (req, res) => {
         if (!user) return res.status(401).json({
             message: "User does not exist"
         })
-        res.clearCookie("refreshToken", { httpOnly: true, secure: process.env.NODE_ENV === 'production', maxAge: 0,sameSite: 'strict', });
+        res.clearCookie("refreshToken", { httpOnly: true, secure: process.env.NODE_ENV === 'production', maxAge: 0, sameSite: 'strict', });
         res.status(200).json({
             message: "User logged out successfully"
         })
@@ -133,19 +139,4 @@ const logoutUser = async (req, res) => {
     }
 }
 
-const uploadImage = async (req,res) => {
-    console.log(process.env.CLOUDINARY_CLOUD_NAME);
-    if (!req.file) return res.status(400).json({
-        message: "No file found"
-    })
-    const image = req.file.path
-    const url = await uploadImageToCloudinary(image)
-    console.log(url);
-    
-    res.status(400).json({
-        message: "File found",
-        url
-    })
-}
-
-export { registerUser, loginUser, logoutUser,uploadImage }
+export { registerUser, loginUser, logoutUser }

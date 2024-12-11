@@ -1,13 +1,13 @@
 import mongoose from "mongoose";
 import bcrypt from "bcrypt"
 const userSchema = new mongoose.Schema({
-    username: {
+    userName: {
         type: String,
         required: [true, 'Username is required!'],
         unique: true,
         lowercase: true
     },
-    fullname: {
+    fullName: {
         type: String,
         required: [true, 'Fullname is required!'],
     },
@@ -27,7 +27,7 @@ const userSchema = new mongoose.Schema({
         type: String,
         required: [true, 'Password is required!']
     },
-    pfp: {
+    profilePicture: {
         type: String,
         required: [true, "Profile picture is required!"]
     },
