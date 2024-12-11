@@ -1,5 +1,5 @@
 import mongoose from "mongoose";
-import blogModel from "../model/blogs.models.js";
+import blogModel from "../models/blogs.models.js";
 
 const addBlog = async (req, res) => {
     try {

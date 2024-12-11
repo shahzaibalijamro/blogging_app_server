@@ -1,5 +1,5 @@
 import mongoose from "mongoose";
-import User from "../model/users.models.js"
+import User from "../models/users.models.js"
 import jwt from "jsonwebtoken"
 import bcrypt from "bcrypt"
 
@@ -133,4 +133,15 @@ const logoutUser = async (req, res) => {
     }
 }
 
-export { registerUser, loginUser, logoutUser }
+const uploadImage = async (req,res) => {
+    if (!req.file) return res.status(400).json({
+        message: "No file found"
+    })
+    const profilePicture = req.file
+    res.status(400).json({
+        message: "File found",
+        profilePicture
+    })
+}
+
+export { registerUser, loginUser, logoutUser,uploadImage }
