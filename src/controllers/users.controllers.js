@@ -2,7 +2,7 @@ import mongoose from "mongoose";
 import User from "../models/users.models.js"
 import jwt from "jsonwebtoken"
 import bcrypt from "bcrypt"
-
+import { uploadImageToCloudinary } from "../utils/cloudinary.utils.js";
 // generates tokens
 const generateAccessandRefreshTokens = function (user) {
     const accessToken = jwt.sign({ _id: user._id, email: user.email }, process.env.ACCESS_TOKEN_SECRET, {
@@ -134,13 +134,17 @@ const logoutUser = async (req, res) => {
 }
 
 const uploadImage = async (req,res) => {
+    console.log(process.env.CLOUDINARY_CLOUD_NAME);
     if (!req.file) return res.status(400).json({
         message: "No file found"
     })
-    const profilePicture = req.file
+    const image = req.file.path
+    const url = await uploadImageToCloudinary(image)
+    console.log(url);
+    
     res.status(400).json({
         message: "File found",
-        profilePicture
+        url
     })
 }
 
