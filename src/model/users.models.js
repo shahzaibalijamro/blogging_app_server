@@ -20,16 +20,20 @@ const userSchema = new mongoose.Schema({
             validator: function (value) {
                 return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)
             },
-            message: props => `${props.value} is not a valid email address`,
+            message: props => `${props.value} is not a valid email address!`,
         }
     },
     password: {
         type: String,
         required: [true, 'Password is required!']
     },
+    pfp: {
+        type: String,
+        required: [true, "Profile picture is required!"]
+    },
     refreshToken: {
         type: String,
-        required: [true, 'Refresh token is required']
+        required: [true, 'Refresh token is required!']
     }
 }, { timestamps: true })
 
