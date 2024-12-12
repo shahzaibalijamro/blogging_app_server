@@ -147,7 +147,10 @@ const logoutUser = async (req, res) => {
 
 const updateUserData = async (req,res) => {
     console.log(req.cookies);
-    
+    const {refreshToken} = req.cookies;
+    var decoded = jwt.verify(refreshToken, process.env.REFRESH_TOKEN_SECRET);
+    console.log(decoded);
+    res.send("done")
     // const { 
     // userName,
     // fullName,
