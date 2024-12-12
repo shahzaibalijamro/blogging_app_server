@@ -4,8 +4,14 @@ import blogModel from "../models/blogs.models.js";
 const addBlog = async (req, res) => {
     try {
         const { title, description, author } = req.body;
-        if (!title || !description || !author) {
-            return res.status(400).json({ message: "Blog title,description and user email is required!" });
+        if (!title || !description) {
+            return res.status(400).json({ message: "Blog title,description is required!" });
+        }
+        if (!author || !mongoose.Types.ObjectId.isValid(author)) {
+            return res.status(400).json({
+                message: "Invalid author ID",
+                status: 400
+            })
         }
         const newblog = await blogModel.create({ title, description, author })
         res.status(201).json({

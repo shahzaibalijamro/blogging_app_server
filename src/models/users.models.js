@@ -34,6 +34,12 @@ const userSchema = new mongoose.Schema({
     refreshToken: {
         type: String,
         required: [true, 'Refresh token is required!']
+    },
+    publishedBlogs: {
+        type: [{
+            type: mongoose.Schema.Types.ObjectId,
+            ref: "blog"
+        },]
     }
 }, { timestamps: true })
 
