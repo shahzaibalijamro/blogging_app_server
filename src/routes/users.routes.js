@@ -13,4 +13,7 @@ userRouter.post("/login", loginUser)
 //logout User
 userRouter.post("/logout", logoutUser)
 
+//update User
+userRouter.post("/update", logoutUser)
+
 export { userRouter }

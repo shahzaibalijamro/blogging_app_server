@@ -146,9 +146,16 @@ const logoutUser = async (req, res) => {
 //update user data
 
 const updateUserData = async (req,res) => {
-    const { userName,fullName, } = req.body
+    console.log(req.cookies);
+    
+    // const { 
+    // userName,
+    // fullName,
+    // profilePicture } = req.body;
+
+
 }
 
 
 
-export { registerUser, loginUser, logoutUser }
+export { registerUser, loginUser, logoutUser,updateUserData }
