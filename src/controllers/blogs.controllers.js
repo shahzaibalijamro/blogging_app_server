@@ -1,5 +1,6 @@
 import mongoose from "mongoose";
 import blogModel from "../models/blogs.models.js";
+import UserModel from "../models/users.models.js";
 
 const addBlog = async (req, res) => {
     try {
@@ -13,7 +14,14 @@ const addBlog = async (req, res) => {
                 status: 400
             })
         }
+        const user = await UserModel.findById(author);
+        if (!user) return res.status(400).json({
+            message: "Author not found!"
+        })
         const newblog = await blogModel.create({ title, description, author })
+        const updateUser = await UserModel.findByIdAndUpdate(author, {
+            $push: {publishedBlogs : newblog._id}
+        })
         res.status(201).json({
             message: "Blog added",
             status: 201,

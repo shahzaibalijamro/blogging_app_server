@@ -142,4 +142,13 @@ const logoutUser = async (req, res) => {
     }
 }
 
+
+//update user data
+
+const updateUserData = async (req,res) => {
+    const { userName,fullName, } = req.body
+}
+
+
+
 export { registerUser, loginUser, logoutUser }
